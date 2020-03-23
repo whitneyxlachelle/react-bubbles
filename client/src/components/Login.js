@@ -1,12 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Login = () => {
-  // make a post request to retrieve a token from the api
-  // when you have handled the token, navigate to the BubblePage route
+const Login = (props) => {
+  const [credentials, setCredentials] = useState({});
+ 
+
+   const handleChange = event => {
+     event.preventDefault();
+       setCredentials({
+         ...credentials,
+         [event.target.name]: event.target.value,
+       })
+   }
   return (
     <>
       <h1>Welcome to the Bubble App!</h1>
-      <p>Build a login page here</p>
+     <div>
+       <form>
+         <input 
+         type="text"
+         name="username"
+         placeholder="Username"
+         onChange={handleChange}
+         />
+           <input 
+         type="password"
+         name="password"
+         placeholder="Password"
+         onChange={handleChange}
+         />
+         <button>Log in</button>
+       </form>
+     </div>
     </>
   );
 };
