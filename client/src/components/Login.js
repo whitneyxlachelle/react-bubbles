@@ -1,18 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { axiosWithAuth } from '../utils/axiosWithAuth';
 
 const Login = (props) => {
-  console.log(props);
-  const [credentials, setCredentials] = useState({});
-
+  //console.log(props);
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
 
   //save token to localStorage
+
   const handleSubmit = event => {
     event.preventDefault();
     axiosWithAuth()
       .post('http://localhost:5000/api/login', credentials)
       .then(response => {
+        console.log(response.data.payload)
         localStorage.setItem('token', response.data.payload);
+        props.history.push('/bubblePage')
       })
   }
 
@@ -33,14 +38,16 @@ const Login = (props) => {
             name="username"
             placeholder="Username"
             onChange={handleChange}
+            value={credentials.username}
           />
           <input
             type="password"
             name="password"
             placeholder="Password"
             onChange={handleChange}
+            value={credentials.password}
           />
-          <button>Log in</button>
+          <button type="submit">Log in</button>
         </form>
       </div>
     </>
