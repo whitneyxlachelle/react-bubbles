@@ -7,7 +7,8 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  //console.log(colors);
+  //console.log(updateColors)
+  console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -16,21 +17,35 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
+  //conditional operator
+  //if color.id is the same as colorToEdit.id...colorToEdit is evaluated 
   const saveEdit = e => {
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+  
+    axiosWithAuth()
+      .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
+      .then(response => {
+        console.log(response.data);
+        setEditing(false);
+        updateColors(colors.map(color => {
+          return color.id === colorToEdit.id ? colorToEdit : color
+        }));
+      })
+      .catch(error => console.log(error))
   };
 
+  //remember: filter() method creates a new array with all elements 
+  //that pass the test implemented by the provided function.
   const deleteColor = color => {
-   axiosWithAuth()
-   .delete(`http://localhost:5000/api/colors/${color.id}`)
-   .then(response => {
-     console.log(response)
-   })
-   .catch(error => console.log(error))
-
+    axiosWithAuth()
+      .delete(`http://localhost:5000/api/colors/${color.id}`)
+      .then(response => {
+        console.log(response)
+        updateColors(colors.filter(color => 
+          color.id !== response.data)
+          )
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -41,11 +56,11 @@ const ColorList = ({ colors, updateColors }) => {
           <li key={color.color} onClick={() => editColor(color)}>
             <span>
               <span className="delete" onClick={e => {
-                    e.stopPropagation();
-                    deleteColor(color)
-                  }
-                }>
-                  x
+                e.stopPropagation();
+                deleteColor(color)
+              }
+              }>
+                x
               </span>{" "}
               {color.color}
             </span>
